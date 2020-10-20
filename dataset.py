@@ -67,14 +67,13 @@ class TableTennis(torch.utils.data.Dataset):
 
         if not self.mode == 'test':
             if self.__C.AUGMENTATION:
-                transform = A.compose([
+                transform = A.Compose([
                     A.Flip(),
                     A.RandomScale(),
                     A.Rotate(limit=10)
                 ])
                 transformed = transform(images=rgb_video, masks=flow_video)
-                rgb_video = trasnformed['images']
-                flow_video = transform['masks']
+                rgb_video , flow_video = self.aug_video(rgb_video, flow_video, transform)
 
         # Crop ROI
         roi_centers = np.load(os.path.join(path_video, self.__C.FLOW + '/roi_centers.npy'))
@@ -86,3 +85,13 @@ class TableTennis(torch.utils.data.Dataset):
         flow_video = np.transpose(np.array(flow_video), (3, 0, 1, 2))
         label = self.label[idx]
         return rgb_video, flow_video, label
+
+    
+    def aug_video(self, rgb_video, flow_video, transform):
+        seed = random.randint(0, 999999999)
+        for i in range(len(rgb_video)):
+            random.seed(seed)
+            transformed = transform(image=rgb_video[i], mask=flow_video[i])
+            rgb_video[i] = transformed['image']
+            flow_video[i] = transformed['mask']
+        return rgb_video, flow_video

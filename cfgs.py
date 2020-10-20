@@ -1,4 +1,4 @@
-import os, datetime, sys, logging, functools
+import os, sys, logging, functools
 import torch
 import numpy as np
 from utils import make_path
@@ -54,7 +54,7 @@ class Cfgs():
         self.NUM_CLASSES = 20
         self.BATCH_SIZE = 10
         self.EPOCHS = 2000
-        self.MODEL_NAME = '%s_%s' % (datetime.datetime.now().strftime("%d-%m-%Y_%H-%M"), self.MODEL_TYPE)
+        self.MODEL_NAME = '%s' % (self.MODEL_TYPE)
         self.PATH_MODEL = os.path.join(self.OUTPUT_DIR, self.MODEL_NAME)
 
         self.setup_logger()
