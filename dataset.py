@@ -18,7 +18,7 @@ class TableTennis(torch.utils.data.Dataset):
         self.label = []
         with open(os.path.join(self.__C.PATH_DATA, '{}.csv'.format(self.__C.MODE)), 'r') as f:
             for path_label in f.read().splitlines():
-                path, label = path_label.split()
+                path, label = path_label.split(self.__C.DATA_SEPARATOR)
                 self.path.append(path)
                 self.label.append(label)
 

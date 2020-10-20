@@ -35,6 +35,7 @@ class Cfgs():
         self.PATH_DATA = 'data'
         self.LABEL_DICT = os.path.join(self.PATH_DATA, 'label_dict.json')
         self.NUM_WORKERS = 8
+        self.DATA_SEPARATOR = '.'
 
         # --------------------------
         # ---- Optimizer Params ----
