@@ -104,10 +104,10 @@ def train_model(model, __C, train_loader, validation_loader):
     criterion = nn.CrossEntropyLoss() # change with reduction='sum' -> lr to change
     optimizer = optim.SGD(
         model.parameters(), 
-        lr=__C.lr, 
-        momentum=__C.momentum, 
-        weight_decay=__C.decay, 
-        nesterov=__C.nesterov
+        lr=__C.LR, 
+        momentum=__C.MOMENTUM, 
+        weight_decay=__C.DECAY, 
+        nesterov=__C.NESTEROV
     )
 
     # For plot
@@ -121,7 +121,7 @@ def train_model(model, __C, train_loader, validation_loader):
     min_loss_val = 1000
     epoch_start = 1
 
-    if __C.load:
+    if __C.LOAD:
         logger.info('Load model %s for retraining' % (__C.PATH_MODEL))
         epoch_start, dict_of_values, cfgs_dict = load_model(model, __C.PATH_MODEL, optimizer=optimizer)
         __C.add_args(cfgs_dict)

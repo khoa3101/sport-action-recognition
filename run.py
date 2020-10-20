@@ -93,9 +93,9 @@ if __name__ == "__main__":
     logger.info(__C)
 
     #### Same seed #####
-    reset_training(__C.seed)
+    reset_training(__C.SEED)
     make_path(__C.PATH_MODEL)
-    if __C.mode == 'test':
+    if __C.MODE == 'test':
         __C.LOAD = True
         test(__C)
     else:

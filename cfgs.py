@@ -1,5 +1,6 @@
 import os, datetime, sys, logging, functools
 import torch
+import numpy as np
 from utils import make_path
 from types import MethodType
 
@@ -31,11 +32,11 @@ class Cfgs():
         self.AUGMENTATION = True
         self.FLOW = 'DeepFlow'
         self.NORM = 'normal'
-        self.SIZE_DATA = [100, 120, 120]
+        self.SIZE_DATA = np.array([100, 120, 120])
         self.PATH_DATA = 'data'
         self.LABEL_DICT = os.path.join(self.PATH_DATA, 'label_dict.json')
         self.NUM_WORKERS = 8
-        self.DATA_SEPARATOR = '.'
+        self.DATA_SEPARATOR = ','
 
         # --------------------------
         # ---- Optimizer Params ----

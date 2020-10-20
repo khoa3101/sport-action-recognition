@@ -1,7 +1,7 @@
 import torch
 import glob, json, cv2, os, random
 import numpy as np
-from vidaug import augmentors as va
+import albumentations as A
 
 class TableTennis(torch.utils.data.Dataset):
     def __init__(self, mode, __C):
@@ -67,14 +67,14 @@ class TableTennis(torch.utils.data.Dataset):
 
         if not self.mode == 'test':
             if self.__C.AUGMENTATION:
-                videos = np.concatenate((rgb_video, flow_video), axis=0)
-                sequence = va.Sequential([
-                    va.RandomRotate(10),
-                    va.RandomTranslate(0.1*self.__C.W, 0.1*self.H),
+                transform = A.compose([
+                    A.Flip(),
+                    A.RandomScale(),
+                    A.Rotate(limit=10)
                 ])
-                video = sequence(video)
-                rgb_video = video[:T]
-                flow_video = video[-T:]
+                transformed = transform(images=rgb_video, masks=flow_video)
+                rgb_video = trasnformed['images']
+                flow_video = transform['masks']
 
         # Crop ROI
         roi_centers = np.load(os.path.join(path_video, self.__C.FLOW + '/roi_centers.npy'))

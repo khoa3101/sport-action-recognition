@@ -168,10 +168,10 @@ class NetSimpleBranch(nn.Module):
 
     
 def make_architecture(__C):
-    if __C.MODEL_TYPW == 'twin':
+    if __C.MODEL_TYPE == 'twin':
         model = NetTwin(__C.SIZE_DATA, __C.NUM_CLASSES)
     
     model.cuda()
-    if self.__C.N_GPU > 1:
+    if __C.N_GPU > 1:
         model = nn.DataParallel(net, device_ids=__C.DEVICES)
     return model
