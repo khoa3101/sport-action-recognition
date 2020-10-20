@@ -52,7 +52,7 @@ class Cfgs():
 
         self.MODEL_TYPE = 'twin'
         self.NUM_CLASSES = 20
-        self.BATCH_SIZE = 10
+        self.BATCH_SIZE = 2
         self.EPOCHS = 2000
         self.MODEL_NAME = '%s' % (self.MODEL_TYPE)
         self.PATH_MODEL = os.path.join(self.OUTPUT_DIR, self.MODEL_NAME)

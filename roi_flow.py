@@ -18,8 +18,8 @@ def center(flow, alpha=0.6):
     #X_max = np.array([argmax % norm.shape[0], argmax // norm.shape[1]])
     delta = norm > 1e-5
     row, column = np.indices((180, 320))
-    x = np.sum(column*delta) // np.sum(delta)
-    y = np.sum(row*delta) // np.sum(delta)
+    x = np.sum(row*delta) // np.sum(delta)
+    y = np.sum(column*delta) // np.sum(delta)
     #x_roi = alpha*func(320, X_max[0], 120) + (1-alpha)*func(180, X_g[0], 120)
     #y_roi = alpha*func(320, X_max[1], 120) + (1-alpha)*func(180, X_g[1], 120)
     return np.array([x, y])#np.array([x_roi, y_roi])

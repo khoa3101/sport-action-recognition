@@ -16,11 +16,11 @@ class TableTennis(torch.utils.data.Dataset):
     def _construct(self):
         self.path = []
         self.label = []
-        with open(os.path.join(self.__C.PATH_DATA, '{}.csv'.format(self.__C.MODE)), 'r') as f:
+        with open(os.path.join(self.__C.PATH_DATA, '{}.csv'.format(self.mode)), 'r') as f:
             for path_label in f.read().splitlines():
                 path, label = path_label.split(self.__C.DATA_SEPARATOR)
                 self.path.append(path)
-                self.label.append(label)
+                self.label.append(self.label_dict[label])
 
 
     def __len__(self):
@@ -38,16 +38,17 @@ class TableTennis(torch.utils.data.Dataset):
 
 
     def get_annotation_data(self, idx):
-        [T, W, H] = self.__C.SIZE_DATA
+        [T, H, W] = self.__C.SIZE_DATA
         # Get indices of taken frames
         path_video = self.path[idx]
         num_frames = len(glob.glob(path_video + '/RGB/*'))
+        
         if self.__C.AUGMENTATION:
             frames_idx = random.sample(range(1, num_frames), T)
             frames_idx.sort()
         else:
             interval = (num_frames - T) // 2
-            frames_idx = range(interval, interval+100)
+            frames_idx = range(interval, interval+T)
 
         # Get videos
         rgb_video = []
@@ -55,7 +56,11 @@ class TableTennis(torch.utils.data.Dataset):
         for frame in frames_idx:
             # RGB
             frame_rgb = cv2.imread(os.path.join(path_video, 'RGB/%08d.png' % (frame))).astype(np.float32)
-            rgb_video.append(frame / 255.)
+            frame_rgb_norm = frame_rgb / 255.
+            rgb_video.append(np.pad(
+                frame_rgb_norm, 
+                ((H//2, H//2), (W//2, W//2), (0, 0))
+            ))
             # Flow
             flow_x = cv2.imread(os.path.join(path_video, self.__C.FLOW + '/%08d_x.png' % (frame)), 0)
             flow_y = cv2.imread(os.path.join(path_video, self.__C.FLOW + '/%08d_y.png' % (frame)), 0)
@@ -63,23 +68,29 @@ class TableTennis(torch.utils.data.Dataset):
             flow[flow==128] = 127.5
             flow[flow==127] = 127.5
             frame_flow = cv2.normalize(flow, None, -1, 1, cv2.NORM_MINMAX)
-            flow_video.append(frame_flow)
+            flow_video.append(np.pad(
+                frame_flow, 
+                ((H//2, H//2), (W//2, W//2), (0, 0))
+            ))
 
         if not self.mode == 'test':
             if self.__C.AUGMENTATION:
                 transform = A.Compose([
                     A.Flip(),
-                    A.RandomScale(),
+                    #A.RandomScale(),
                     A.Rotate(limit=10)
                 ])
-                transformed = transform(images=rgb_video, masks=flow_video)
                 rgb_video , flow_video = self.aug_video(rgb_video, flow_video, transform)
 
         # Crop ROI
         roi_centers = np.load(os.path.join(path_video, self.__C.FLOW + '/roi_centers.npy'))
-        for i, c in enumerate(roi_centers):
-            rgb_video[i] = rgb_video[i][c[0]-W//2:c[0]+W//2][c[1]-H//2:c[1]+H//2]
-            flow_video[i] = flow_video[i][c[0]-W//2:c[0]+W//2][c[1]-H//2:c[1]+H//2]
+        for i, frame in enumerate(frames_idx):
+            x_start = roi_centers[frame-1, 0]
+            y_start = roi_centers[frame-1, 1]
+            x_end = roi_centers[frame-1, 0] + H
+            y_end = roi_centers[frame-1, 1] + W
+            rgb_video[i] = rgb_video[i][x_start:x_end, y_start:y_end, :]
+            flow_video[i] = flow_video[i][x_start:x_end, y_start:y_end, :]
 
         rgb_video = np.transpose(np.array(rgb_video), (3, 0, 1, 2))
         flow_video = np.transpose(np.array(flow_video), (3, 0, 1, 2))
