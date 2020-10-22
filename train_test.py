@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from utils import make_train_figure, progress_bar
+from tqdm import tqdm
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ def train_epoch(epoch, __C, model, data_loader, optimizer, criterion):
     aLoss = 0
     Acc = 0
 
-    for batch_idx, batch in enumerate(data_loader):
+    for batch_idx, batch in enumerate(tqdm(data_loader)):
         # Get batch tensor
         rgb, flow, label = batch['rgb'], batch['flow'], batch['label']
 
@@ -72,7 +73,7 @@ def validation_epoch(epoch, __C, model, data_loader, criterion):
     aLoss = 0
     Acc = 0
 
-    for batch_idx, batch in enumerate(data_loader):
+    for batch_idx, batch in enumerate(tqdm(data_loader)):
         # Get batch tensor
         rgb, flow, label = batch['rgb'], batch['flow'], batch['label']
 

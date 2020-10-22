@@ -46,4 +46,6 @@ if __name__ == '__main__':
     for flow in flows:
         roi_center = center(flow)
         roi_centers.append(roi_center)
-    np.save(os.path.join(flow_method_path, 'roi_centers.npy'), roi_centers)
+    roi_centers = np.array(roi_centers)
+    blur = cv2.GaussianBlur(roi_centers, (41, 41), 6.5)
+    np.save(os.path.join(flow_method_path, 'roi_centers.npy'), blur)

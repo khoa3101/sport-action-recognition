@@ -29,7 +29,7 @@ class Cfgs():
 
         # {'train', test'}
         self.MODE = 'train'
-        self.AUGMENTATION = True
+        self.AUGMENTATION = False
         self.FLOW = 'DeepFlow'
         self.NORM = 'normal'
         self.SIZE_DATA = np.array([100, 120, 120])
@@ -53,7 +53,7 @@ class Cfgs():
         self.MODEL_TYPE = 'twin'
         self.NUM_CLASSES = 20
         self.BATCH_SIZE = 2
-        self.EPOCHS = 2000
+        self.EPOCHS = 100
         self.MODEL_NAME = '%s' % (self.MODEL_TYPE)
         self.PATH_MODEL = os.path.join(self.OUTPUT_DIR, self.MODEL_NAME)
 
